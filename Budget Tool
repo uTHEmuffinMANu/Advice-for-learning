@@ -1,0 +1,142 @@
+def client():                                           #Start Client Define
+    name1=input("What is your name: ") 
+    print("Hello,", name1 + "!")
+    return name1                                        #End Client Define
+
+def clientnum():                                        #Start Client Num Define
+    while True:
+        num1 = (input("How much do you earn monthly? ")) 
+        try:
+            val =int(str(num1))
+            break
+        except ValueError:
+            print("Please type a valid number" )            
+    return num1                                         #End Client Num Define
+
+def partner():                                          #Start Partner Define
+    name2 = input("What is your partner's name? ")
+    print("Hello,", name2 + "!")
+    return name2                                        #End Partner Define
+
+def partnernum():                                       #Start Partner Num Define
+    while True:
+        num2 = (input("How much do you earn monthly? "))
+        try:
+                val =int(str(num2))
+                break
+        except ValueError:
+            print("Please type a valid number" )
+    sum1 = (int(Client_Income) + int(num2))
+    print("Together you make $"+str(sum1), "monthly." )
+    return num2                                         #End Partner Num Define
+
+
+def Available_Partner():                                #Start Available Partner Define
+    user_inputP= input("Would you like to add a partner? ")
+
+    if user_inputP.lower() in ["yes", "y"]:
+        return 1
+    
+    elif user_inputP.lower() in ["no", "n"]:
+        print("Okay lets move on then.")
+        return 2
+
+    else:
+        print("Sorry please answer Yes, (Y) or No (N)" )
+        return Available_Partner()                      #End Available Partner Define
+
+Client_Name = client()                                  #Start Client input requests
+Client_Income = clientnum()
+Partner_check = Available_Partner()                     #End Client input requests
+
+
+if Partner_check == 1:                                  #Start Partner input requests
+    PartnerName = partner()
+    Partner_Income = partnernum()
+    annual_gross = ((int(Client_Income) + int(Partner_Income)) * 12)
+
+else:
+    annual_gross = (int(Client_Income) * 12)            #End Partner input Requests
+
+Expense_name_recurring_List = []                        #Start Expense Lists
+Expense_name_one_list = []                                  
+Expense_value_recurring_List = []
+Expense_value_one_List = []
+Expense_freq_List = []                                  #End Expense Lists
+
+def expense():                                          #Start Expense Definitions
+    expense_check = input("Would you like to deduct a recurring or a one-time expense: ")
+    if expense_check.lower() in ["recurring", "r"]:
+        print("Great lets deduct this recurring expense ")
+        expense_reccuring_input()
+    elif expense_check.lower() in ["one-time", "o", "1" ]:
+        print("Great lets deduct this one-time expense ")
+        expense_one_input()
+    elif expense_check.lower() in ["no", "n"]:
+        print("Okay no problem have a great day! Your annual income without deductions is $"+str(annual_gross) )
+        return 3
+    else:
+        print("Please answer Recurring (R), One-Time (O), or No (N) ")
+        return expense()
+
+def more_expenses():
+    Another_expense = input("Do you have another expense? ")
+    if Another_expense.lower() in ["yes", "y"]:
+        expense()
+    elif Another_expense.lower() in ["no", "n"]:
+        print("Sounds good, let's look at the results")
+    else:
+        print("Please answer Yes (Y) or No (N) ")
+        return more_expenses()
+
+def expense_reccuring_input():
+    Expense_name = input("What is your recurring expense? ")
+    Expense_name_recurring_List.append(Expense_name)
+
+    while True:
+        Expense_value = input("How much is this expense? ")
+        try:
+            float(Expense_value)
+            break
+        except ValueError:
+            print("Please answer with a number. ")
+        
+    Expense_value_recurring_List.append(float(Expense_value))
+
+    while True:
+        Expense_freq = input("How often does this expense come out in a month? ")
+        try:
+            float(Expense_freq)
+            break
+        except ValueError:
+            print("Please answer with a number. ")
+
+    Expense_freq_List.append(float(Expense_freq))
+    more_expenses() 
+    
+def expense_one_input():
+    Expense_name = input("What is your one-time expense? ")
+    Expense_name_one_list.append(Expense_name)
+
+    while True:
+        Expense_value = input("How much is this expense? ")
+        try:
+            float(Expense_value)
+            break
+        except ValueError:
+            print("Please answer with a number. ")
+        
+    Expense_value_one_List.append(float(Expense_value))
+    more_expenses()                                #End Expense Definitions
+
+Client_Expense_Type = expense()
+
+Expense_recurring_Totals = [x * y for x, y in zip(Expense_value_recurring_List, Expense_freq_List)]
+Expenses_recurring_Listed = [str(w) + " " + str(z) for w, z in zip(Expense_name_recurring_List, Expense_recurring_Totals)]
+
+print("Your monthly Gross income is $" + str((annual_gross / 12)))
+print("Your annual Net Income is $" + str(annual_gross - (((sum(Expense_recurring_Totals)) * 12) + sum(Expense_value_one_List))))
+print("Your monthly Net Income is $" + str((annual_gross / 12) - ((sum(Expense_recurring_Totals)) + sum(Expense_value_one_List))))
+print("Your monthly total recurring expense total is $", sum(Expense_recurring_Totals))
+print("Your monthly one-time expense total is $",sum(Expense_value_one_List))
+print("Your total expenses for the month is $", (sum(Expense_value_one_List) + sum(Expense_recurring_Totals)))
